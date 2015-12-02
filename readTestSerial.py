@@ -21,18 +21,36 @@ __author__ = 's.gongoragarcia@gmail.com'
 
 
 def mainSerialSocket(port, speed):
+
+    print "inside"
+
     import serial
     ser = serial.Serial(port, speed)
+    ser.timeout = None
 
-    while True:
-        byteRead = ser.read()
-        byteReadHex = hex(ord(byteRead))
+    print ser
 
-        # Copiar lista a un fichero.
-        file = open("log2.txt", "a")
-        file.write(byteReadHex)
-        file.write("\n")
-        file.close()
+    lista = []
+    i = 0
+    fichero = open("log6.txt", "a")
+
+    try:
+        while i < 35:  # was 400
+            i = i + 1
+            byteRead = ser.read(10)
+            # byteReadHex = hex(ord(byteRead))
+            byteReadHex = byteRead
+            lista.append(byteReadHex)
+    except Exception as e:
+        print e
+
+    try:
+        for item in lista:
+            fichero.write("%s\n" % item)
+        fichero.close()
+    except Exception as e:
+        print e
+        print "error en el volcado"
 
 
 def mainKISSSocket(port, speed):
@@ -60,7 +78,7 @@ def print_frame(frame):
 
 if __name__ == "__main__":
     port = '/dev/ttyUSB0'
-    speed = 115200
+    speed = 500000
 
     import sys
     try:
@@ -69,4 +87,4 @@ if __name__ == "__main__":
         elif sys.argv[1] == '-k':
             mainKISSSocket(port, speed)
     except:
-        pass
+        print "Error"
